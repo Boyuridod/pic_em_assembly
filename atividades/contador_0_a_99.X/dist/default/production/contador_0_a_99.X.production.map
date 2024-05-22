@@ -1,0 +1,58 @@
+MPLINK 5.08, LINKER
+Linker Map File - Created Sun Apr 07 23:02:22 2024
+
+                                 Section Info
+                  Section       Type    Address   Location Size(Bytes)
+                ---------  ---------  ---------  ---------  ---------
+                 RES_VECT       code   0x000000    program   0x000002
+                   .cinit    romdata   0x000001    program   0x000004
+                      ISR       code   0x000004    program   0x0000d4
+.config_2007_BUILD/DEFAULT/PRODUCTION/CONTADO       code   0x002007    program   0x000002
+
+
+
+                              Program Memory Usage 
+                               Start         End      
+                           ---------   ---------      
+                            0x000000    0x000002      
+                            0x000004    0x00006d      
+                            0x002007    0x002007      
+            110 out of 2182 program addresses used, program memory utilization is 5%
+
+
+
+                              Symbols - Sorted by Name
+                     Name    Address   Location    Storage File                     
+                ---------  ---------  ---------  --------- ---------                
+            ACENDE_DEZENA   0x00005a    program     static D:\projetos_pic\contador_0_a_99.X\contador_0_a_99.asm
+               ACENDE_LED   0x000055    program     static D:\projetos_pic\contador_0_a_99.X\contador_0_a_99.asm
+           ACENDE_UNIDADE   0x00005f    program     static D:\projetos_pic\contador_0_a_99.X\contador_0_a_99.asm
+             BUSCA_CODIGO   0x000063    program     static D:\projetos_pic\contador_0_a_99.X\contador_0_a_99.asm
+          B_INICIAR_PRESS   0x000047    program     static D:\projetos_pic\contador_0_a_99.X\contador_0_a_99.asm
+            B_PARAR_PRESS   0x00003d    program     static D:\projetos_pic\contador_0_a_99.X\contador_0_a_99.asm
+                   INICIO   0x00001b    program     static D:\projetos_pic\contador_0_a_99.X\contador_0_a_99.asm
+           LACO_PRINCIPAL   0x000026    program     static D:\projetos_pic\contador_0_a_99.X\contador_0_a_99.asm
+                   PARADO   0x000040    program     static D:\projetos_pic\contador_0_a_99.X\contador_0_a_99.asm
+          SAI_INTERRUPCAO   0x000017    program     static D:\projetos_pic\contador_0_a_99.X\contador_0_a_99.asm
+            TROCA_DISPLAY   0x000057    program     static D:\projetos_pic\contador_0_a_99.X\contador_0_a_99.asm
+                TROCA_LED   0x000050    program     static D:\projetos_pic\contador_0_a_99.X\contador_0_a_99.asm
+
+
+
+                              Symbols - Sorted by Address
+                     Name    Address   Location    Storage File                     
+                ---------  ---------  ---------  --------- ---------                
+          SAI_INTERRUPCAO   0x000017    program     static D:\projetos_pic\contador_0_a_99.X\contador_0_a_99.asm
+                   INICIO   0x00001b    program     static D:\projetos_pic\contador_0_a_99.X\contador_0_a_99.asm
+           LACO_PRINCIPAL   0x000026    program     static D:\projetos_pic\contador_0_a_99.X\contador_0_a_99.asm
+            B_PARAR_PRESS   0x00003d    program     static D:\projetos_pic\contador_0_a_99.X\contador_0_a_99.asm
+                   PARADO   0x000040    program     static D:\projetos_pic\contador_0_a_99.X\contador_0_a_99.asm
+          B_INICIAR_PRESS   0x000047    program     static D:\projetos_pic\contador_0_a_99.X\contador_0_a_99.asm
+                TROCA_LED   0x000050    program     static D:\projetos_pic\contador_0_a_99.X\contador_0_a_99.asm
+               ACENDE_LED   0x000055    program     static D:\projetos_pic\contador_0_a_99.X\contador_0_a_99.asm
+            TROCA_DISPLAY   0x000057    program     static D:\projetos_pic\contador_0_a_99.X\contador_0_a_99.asm
+            ACENDE_DEZENA   0x00005a    program     static D:\projetos_pic\contador_0_a_99.X\contador_0_a_99.asm
+           ACENDE_UNIDADE   0x00005f    program     static D:\projetos_pic\contador_0_a_99.X\contador_0_a_99.asm
+             BUSCA_CODIGO   0x000063    program     static D:\projetos_pic\contador_0_a_99.X\contador_0_a_99.asm
+
+

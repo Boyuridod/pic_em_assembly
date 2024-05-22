@@ -1,0 +1,50 @@
+MPLINK 5.08, LINKER
+Linker Map File - Created Fri Apr 19 23:20:36 2024
+
+                                 Section Info
+                  Section       Type    Address   Location Size(Bytes)
+                ---------  ---------  ---------  ---------  ---------
+                 RES_VECT       code   0x000000    program   0x00004c
+                   .cinit    romdata   0x000026    program   0x000004
+.config_2007_BUILD/DEFAULT/PRODUCTION/NEWPIC_       code   0x002007    program   0x000002
+
+
+
+                              Program Memory Usage 
+                               Start         End      
+                           ---------   ---------      
+                            0x000000    0x000027      
+                            0x002007    0x002007      
+            41 out of 2182 program addresses used, program memory utilization is 1%
+
+
+
+                              Symbols - Sorted by Name
+                     Name    Address   Location    Storage File                     
+                ---------  ---------  ---------  --------- ---------                
+                  DESLIGA   0x000017    program     static D:\projetos_pic\atividades\pisca_pisca_duplo.X\newpic_8b_simple.asm
+                   ESPERA   0x00001a    program     static D:\projetos_pic\atividades\pisca_pisca_duplo.X\newpic_8b_simple.asm
+            ESPERA_MAIS_I   0x00001d    program     static D:\projetos_pic\atividades\pisca_pisca_duplo.X\newpic_8b_simple.asm
+            ESPERA_MAIS_J   0x000021    program     static D:\projetos_pic\atividades\pisca_pisca_duplo.X\newpic_8b_simple.asm
+               INTERROMPE   0x000003    program     static D:\projetos_pic\atividades\pisca_pisca_duplo.X\newpic_8b_simple.asm
+                     LIGA   0x000014    program     static D:\projetos_pic\atividades\pisca_pisca_duplo.X\newpic_8b_simple.asm
+                     MAIN   0x000004    program     static D:\projetos_pic\atividades\pisca_pisca_duplo.X\newpic_8b_simple.asm
+                PISCA_2HZ   0x000009    program     static D:\projetos_pic\atividades\pisca_pisca_duplo.X\newpic_8b_simple.asm
+                PISCA_5HZ   0x000013    program     static D:\projetos_pic\atividades\pisca_pisca_duplo.X\newpic_8b_simple.asm
+
+
+
+                              Symbols - Sorted by Address
+                     Name    Address   Location    Storage File                     
+                ---------  ---------  ---------  --------- ---------                
+               INTERROMPE   0x000003    program     static D:\projetos_pic\atividades\pisca_pisca_duplo.X\newpic_8b_simple.asm
+                     MAIN   0x000004    program     static D:\projetos_pic\atividades\pisca_pisca_duplo.X\newpic_8b_simple.asm
+                PISCA_2HZ   0x000009    program     static D:\projetos_pic\atividades\pisca_pisca_duplo.X\newpic_8b_simple.asm
+                PISCA_5HZ   0x000013    program     static D:\projetos_pic\atividades\pisca_pisca_duplo.X\newpic_8b_simple.asm
+                     LIGA   0x000014    program     static D:\projetos_pic\atividades\pisca_pisca_duplo.X\newpic_8b_simple.asm
+                  DESLIGA   0x000017    program     static D:\projetos_pic\atividades\pisca_pisca_duplo.X\newpic_8b_simple.asm
+                   ESPERA   0x00001a    program     static D:\projetos_pic\atividades\pisca_pisca_duplo.X\newpic_8b_simple.asm
+            ESPERA_MAIS_I   0x00001d    program     static D:\projetos_pic\atividades\pisca_pisca_duplo.X\newpic_8b_simple.asm
+            ESPERA_MAIS_J   0x000021    program     static D:\projetos_pic\atividades\pisca_pisca_duplo.X\newpic_8b_simple.asm
+
+

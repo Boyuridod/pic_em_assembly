@@ -1,0 +1,80 @@
+MPLINK 5.08, LINKER
+Linker Map File - Created Mon May 06 17:06:54 2024
+
+                                 Section Info
+                  Section       Type    Address   Location Size(Bytes)
+                ---------  ---------  ---------  ---------  ---------
+                 RES_VECT       code   0x000000    program   0x000002
+                   .cinit    romdata   0x000001    program   0x000004
+                      ISR       code   0x000004    program   0x00016a
+.config_2007_BUILD/DEFAULT/PRODUCTION/08 - CO       code   0x002007    program   0x000002
+
+
+
+                              Program Memory Usage 
+                               Start         End      
+                           ---------   ---------      
+                            0x000000    0x000002      
+                            0x000004    0x0000b8      
+                            0x002007    0x002007      
+            185 out of 8454 program addresses used, program memory utilization is 2%
+
+
+
+                              Symbols - Sorted by Name
+                     Name    Address   Location    Storage File                     
+                ---------  ---------  ---------  --------- ---------                
+            ACENDE_DEZENA   0x000088    program     static D:\projetos_pic\08 - Yuri David Silva Duarte.X\08 - Controle de temperatura.asm
+            AJUSTA_CANAL0   0x000083    program     static D:\projetos_pic\08 - Yuri David Silva Duarte.X\08 - Controle de temperatura.asm
+          ATIVA_CONVERSAO   0x00004b    program     static D:\projetos_pic\08 - Yuri David Silva Duarte.X\08 - Controle de temperatura.asm
+             BUSCA_CODIGO   0x000016    program     static D:\projetos_pic\08 - Yuri David Silva Duarte.X\08 - Controle de temperatura.asm
+             DESLIGA_TUDO   0x00002d    program     static D:\projetos_pic\08 - Yuri David Silva Duarte.X\08 - Controle de temperatura.asm
+           EXTRAI_CENTENA   0x000067    program     static D:\projetos_pic\08 - Yuri David Silva Duarte.X\08 - Controle de temperatura.asm
+            EXTRAI_DEZENA   0x000079    program     static D:\projetos_pic\08 - Yuri David Silva Duarte.X\08 - Controle de temperatura.asm
+            EXTRAI_MILHAR   0x000055    program     static D:\projetos_pic\08 - Yuri David Silva Duarte.X\08 - Controle de temperatura.asm
+                   INICIO   0x000021    program     static D:\projetos_pic\08 - Yuri David Silva Duarte.X\08 - Controle de temperatura.asm
+           LACO_PRINCIPAL   0x00003a    program     static D:\projetos_pic\08 - Yuri David Silva Duarte.X\08 - Controle de temperatura.asm
+             RES_NEGATIVO   0x0000b7    program     static D:\projetos_pic\08 - Yuri David Silva Duarte.X\08 - Controle de temperatura.asm
+          SAI_INTERRUPCAO   0x000012    program     static D:\projetos_pic\08 - Yuri David Silva Duarte.X\08 - Controle de temperatura.asm
+               SISTEMA_ON   0x00003d    program     static D:\projetos_pic\08 - Yuri David Silva Duarte.X\08 - Controle de temperatura.asm
+              SUB_16_BITS   0x0000a4    program     static D:\projetos_pic\08 - Yuri David Silva Duarte.X\08 - Controle de temperatura.asm
+            TESTA_CENTENA   0x000096    program     static D:\projetos_pic\08 - Yuri David Silva Duarte.X\08 - Controle de temperatura.asm
+             TESTA_DEZENA   0x00008e    program     static D:\projetos_pic\08 - Yuri David Silva Duarte.X\08 - Controle de temperatura.asm
+                TESTA_FIM   0x00004c    program     static D:\projetos_pic\08 - Yuri David Silva Duarte.X\08 - Controle de temperatura.asm
+             TESTA_MILHAR   0x00009e    program     static D:\projetos_pic\08 - Yuri David Silva Duarte.X\08 - Controle de temperatura.asm
+            TRATA_CENTENA   0x000066    program     static D:\projetos_pic\08 - Yuri David Silva Duarte.X\08 - Controle de temperatura.asm
+             TRATA_DEZENA   0x000078    program     static D:\projetos_pic\08 - Yuri David Silva Duarte.X\08 - Controle de temperatura.asm
+            TRATA_UNIDADE   0x000080    program     static D:\projetos_pic\08 - Yuri David Silva Duarte.X\08 - Controle de temperatura.asm
+            TROCA_DISPLAY   0x000085    program     static D:\projetos_pic\08 - Yuri David Silva Duarte.X\08 - Controle de temperatura.asm
+                _ISR_004D   0x00004d    program     static D:\projetos_pic\08 - Yuri David Silva Duarte.X\08 - Controle de temperatura.asm
+
+
+
+                              Symbols - Sorted by Address
+                     Name    Address   Location    Storage File                     
+                ---------  ---------  ---------  --------- ---------                
+          SAI_INTERRUPCAO   0x000012    program     static D:\projetos_pic\08 - Yuri David Silva Duarte.X\08 - Controle de temperatura.asm
+             BUSCA_CODIGO   0x000016    program     static D:\projetos_pic\08 - Yuri David Silva Duarte.X\08 - Controle de temperatura.asm
+                   INICIO   0x000021    program     static D:\projetos_pic\08 - Yuri David Silva Duarte.X\08 - Controle de temperatura.asm
+             DESLIGA_TUDO   0x00002d    program     static D:\projetos_pic\08 - Yuri David Silva Duarte.X\08 - Controle de temperatura.asm
+           LACO_PRINCIPAL   0x00003a    program     static D:\projetos_pic\08 - Yuri David Silva Duarte.X\08 - Controle de temperatura.asm
+               SISTEMA_ON   0x00003d    program     static D:\projetos_pic\08 - Yuri David Silva Duarte.X\08 - Controle de temperatura.asm
+          ATIVA_CONVERSAO   0x00004b    program     static D:\projetos_pic\08 - Yuri David Silva Duarte.X\08 - Controle de temperatura.asm
+                TESTA_FIM   0x00004c    program     static D:\projetos_pic\08 - Yuri David Silva Duarte.X\08 - Controle de temperatura.asm
+                _ISR_004D   0x00004d    program     static D:\projetos_pic\08 - Yuri David Silva Duarte.X\08 - Controle de temperatura.asm
+            EXTRAI_MILHAR   0x000055    program     static D:\projetos_pic\08 - Yuri David Silva Duarte.X\08 - Controle de temperatura.asm
+            TRATA_CENTENA   0x000066    program     static D:\projetos_pic\08 - Yuri David Silva Duarte.X\08 - Controle de temperatura.asm
+           EXTRAI_CENTENA   0x000067    program     static D:\projetos_pic\08 - Yuri David Silva Duarte.X\08 - Controle de temperatura.asm
+             TRATA_DEZENA   0x000078    program     static D:\projetos_pic\08 - Yuri David Silva Duarte.X\08 - Controle de temperatura.asm
+            EXTRAI_DEZENA   0x000079    program     static D:\projetos_pic\08 - Yuri David Silva Duarte.X\08 - Controle de temperatura.asm
+            TRATA_UNIDADE   0x000080    program     static D:\projetos_pic\08 - Yuri David Silva Duarte.X\08 - Controle de temperatura.asm
+            AJUSTA_CANAL0   0x000083    program     static D:\projetos_pic\08 - Yuri David Silva Duarte.X\08 - Controle de temperatura.asm
+            TROCA_DISPLAY   0x000085    program     static D:\projetos_pic\08 - Yuri David Silva Duarte.X\08 - Controle de temperatura.asm
+            ACENDE_DEZENA   0x000088    program     static D:\projetos_pic\08 - Yuri David Silva Duarte.X\08 - Controle de temperatura.asm
+             TESTA_DEZENA   0x00008e    program     static D:\projetos_pic\08 - Yuri David Silva Duarte.X\08 - Controle de temperatura.asm
+            TESTA_CENTENA   0x000096    program     static D:\projetos_pic\08 - Yuri David Silva Duarte.X\08 - Controle de temperatura.asm
+             TESTA_MILHAR   0x00009e    program     static D:\projetos_pic\08 - Yuri David Silva Duarte.X\08 - Controle de temperatura.asm
+              SUB_16_BITS   0x0000a4    program     static D:\projetos_pic\08 - Yuri David Silva Duarte.X\08 - Controle de temperatura.asm
+             RES_NEGATIVO   0x0000b7    program     static D:\projetos_pic\08 - Yuri David Silva Duarte.X\08 - Controle de temperatura.asm
+
+

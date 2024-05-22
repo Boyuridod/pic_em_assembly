@@ -1,0 +1,795 @@
+MPASM 5.71  08 - CONTROLE DE TEMPERATURA.ASM   5-6-2024  17:06:53         PAGE  1
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+                      00001 ; PIC16F877A Configuration Bit Settings
+                      00002 ; Assembly source line config statements
+                      00003 #include "p16f877a.inc"
+                      00001         LIST
+                      00002 
+                      00003 ;==========================================================================
+                      00004 ; Build date : Nov 17 2016
+                      00005 ;  MPASM PIC16F877A processor include
+                      00006 ; 
+                      00007 ;  (c) Copyright 1999-2016 Microchip Technology, All rights reserved
+                      00008 ;==========================================================================
+                      00009 
+                      00567         LIST
+                      00004 ; CONFIG
+                      00005 ; __config 0xFF71
+2007   3F71           00006  __CONFIG _FOSC_XT & _WDTE_OFF & _PWRTE_ON & _BOREN_ON & _LVP_OFF & _CPD_OFF & _WRT_OFF & _CP_OFF
+                      00007 
+                      00008 #define BANK0   BCF STATUS,RP0
+                      00009 #define BANK1   BSF STATUS,RP0
+                      00010  
+                      00011 ;nomeando posição da memória RAM 
+                      00012  CBLOCK 0x20
+  00000020            00013     FLAGS       ;0x20
+  00000021            00014     CONTADOR    ;0x21
+  00000022            00015     UNIDADE     ;0x22
+  00000023            00016     DEZENA      ;0x23
+  00000024            00017     CENTENA     ;0x24
+  00000025            00018     MILHAR      ;0x25
+  00000026            00019     VALOR_ADC_H ;0x26
+  00000027            00020     VALOR_ADC_L ;0x27    
+  00000028            00021     W_TEMP      ;0x28
+  00000029            00022     STATUS_TEMP ;0x29
+  0000002A            00023     X_H
+  0000002B            00024     X_L
+  0000002C            00025     Y_H
+  0000002D            00026     Y_L
+  0000002E            00027     R_H
+  0000002F            00028     R_L 
+                      00029  ENDC
+                      00030  
+                      00031 ;entradas
+                      00032 #define     BTN0            PORTB,0
+                      00033 #define     BTN1            PORTB,1 
+                      00034 #define     BTN2            PORTB,2
+                      00035 #define     BTN3            PORTB,3  
+                      00036  
+                      00037 ;saídas
+                      00038 #define     DISPLAYS        PORTD
+                      00039 #define     D_UNIDADE       PORTB,4
+                      00040 #define     D_DEZENA        PORTB,5
+                      00041 #define     D_CENTENA       PORTB,6
+                      00042 #define     D_MILHAR        PORTB,7
+                      00043 #define     FAN             PORTC,0
+MPASM 5.71  08 - CONTROLE DE TEMPERATURA.ASM   5-6-2024  17:06:53         PAGE  2
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+                      00044 ;#define            FAN_VEL         PORTC,1
+                      00045 #define     HEATER          PORTC,2
+                      00046  
+                      00047 ;variáveis
+                      00048 #define     INT_ATIVA       FLAGS,0
+                      00049 #define     FIM_TEMPO       FLAGS,1
+                      00050 #define     EH_NEGATIVO     FLAGS,2
+                      00051 #define     QUAL_CANAL      FLAGS,3
+                      00052 
+                      00053 ;constantes 
+  00000006            00054 V_TMR0      equ     .6
+  000000FA            00055 V_CONT      equ     .250  
+                      00056             
+                      00057 ;=== programa ==============
+                      00058 RES_VECT    CODE    0x0000    ;vetor de reset, indica a posição inicial do programa na FLASH
+0000   2???           00059     GOTO    INICIO
+                      00060 
+                      00061 ISR         CODE    0x0004      ; interrupt vector location
+0004   00A8           00062     MOVWF   W_TEMP              ;salva o conteúdo de W em W_TEMP            
+0005   0803           00063     MOVF    STATUS,W            ;W = STATUS
+0006   00A9           00064     MOVWF   STATUS_TEMP         ;salva o conteúdo de STATUS em STATUS_TEMP
+0007   1D0B           00065     BTFSS   INTCON,T0IF         ;testa se o indicador de interrupção por TMR0 está ativo
+0008   2???           00066     GOTO    SAI_INTERRUPCAO     ;se não estiver, pula para SAI_INTERRUPCAO
+0009   110B           00067     BCF     INTCON,T0IF         ;zera o flag indicador de interrupção por TMR0
+000A   3006           00068     MOVLW   V_TMR0              ;W = V_TMR0
+000B   0781           00069     ADDWF   TMR0,F              ;TMR0 = TMR0 + V_TMR0
+000C   1420           00070     BSF     INT_ATIVA           ;INT_ATIVA = 1
+000D   0BA1           00071     DECFSZ  CONTADOR,F          ;decrementa CONTADAOR e testa se é zero
+000E   2???           00072     GOTO    SAI_INTERRUPCAO     ;se não for zero, pula para SAI_INTERRUPCAO
+000F   30FA           00073     MOVLW   V_CONT              ;W = V_CONT
+0010   00A1           00074     MOVWF   CONTADOR            ;CONTADOR = V_CONT
+0011   14A0           00075     BSF     FIM_TEMPO           ;FIM_TEMPO = 1  
+0012                  00076 SAI_INTERRUPCAO
+0012   0829           00077     MOVF    STATUS_TEMP,W       ;W = STATUS_TEMP
+0013   0083           00078     MOVWF   STATUS              ;restaura o conteúdo de STATUS
+0014   0828           00079     MOVF    W_TEMP,W            ;restaura o conteúdo de W       
+0015   0009           00080     RETFIE
+                      00081     
+0016                  00082 BUSCA_CODIGO
+0016   0782           00083     ADDWF   PCL,F           
+0017   343F           00084     RETLW   B'00111111'     ;63   
+0018   3406           00085     RETLW   B'00000110'     ;6
+0019   345B           00086     RETLW   B'01011011'     ;91
+001A   344F           00087     RETLW   B'01001111'     ;79
+001B   3466           00088     RETLW   B'01100110'     ;102
+001C   346D           00089     RETLW   B'01101101'     ;109
+001D   347D           00090     RETLW   B'01111101'     ;125
+001E   3407           00091     RETLW   B'00000111'     ;7
+001F   347F           00092     RETLW   B'01111111'     ;127
+0020   346F           00093     RETLW   B'01101111'     ;111
+                      00094     
+0021                  00095 INICIO  
+0021   1683           00096     BANK1                   ;seleciona o banco 1 da memória RAM
+MPASM 5.71  08 - CONTROLE DE TEMPERATURA.ASM   5-6-2024  17:06:53         PAGE  3
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+Message[302]: Register in operand not in bank 0.  Ensure that bank bits are correct.
+0022   1107           00097     BCF     TRISC,2         ;configura a bit 2 do PORTC como saída
+0023   300F           00098     MOVLW   B'00001111'     ;W = 00001111
+Message[302]: Register in operand not in bank 0.  Ensure that bank bits are correct.
+0024   0086           00099     MOVWF   TRISB           ;TRISB = 00001111,configura os 4LSB como entrada e os 4MSB como saída
+Message[302]: Register in operand not in bank 0.  Ensure that bank bits are correct.
+0025   0188           00100     CLRF    TRISD           ;TRISD = 00000000,configura o PORTD como saída
+0026   30D1           00101     MOVLW   B'11010001'     ;palavra de configuração do TMR0
+Message[302]: Register in operand not in bank 0.  Ensure that bank bits are correct.
+0027   0081           00102     MOVWF   OPTION_REG      ;carrega a palavra de configuração do TMR0 no OPTION_REG
+0028   30C4           00103     MOVLW   B'11000100'     ;palavra de configuração do ADCON1
+                      00104                             ;bit 7: justificado à direita = 1
+                      00105                             ;bit 6: origem do clock do ADC - RC = 1 11
+                      00106                             ;bit 5..4: não usado = 00
+                      00107                             ;bit 3..0: PCFG3..0: seleção de entradas = 0100
+Message[302]: Register in operand not in bank 0.  Ensure that bank bits are correct.
+0029   009F           00108     MOVWF   ADCON1          ;carrega a configuração no ADCON1                   
+002A   1283           00109     BANK0                   ;seleciona o banco 0 da memória RAM
+002B   30C9           00110     MOVLW   B'11001001'     ;palavra de configuração do ADCON0
+                      00111                             ;bit 7..6: origem do clock do ADC - RC = 1 11
+                      00112                             ;bit 5..3: seleção de canal a ser lido = 001
+                      00113                             ;bit 2: inicia a conversão e avisa que acabou
+                      00114                             ;bit 1: não usado
+                      00115                             ;bit 0: ativa o conversor AD = 1
+002C   009F           00116     MOVWF   ADCON0          ;carrega a configuração no ADCON0    
+                      00117     
+002D                  00118 DESLIGA_TUDO
+002D   01A2           00119     CLRF    UNIDADE         ;UNIDADE = 0
+002E   01A3           00120     CLRF    DEZENA          ;DEZENA = 0
+002F   01A4           00121     CLRF    CENTENA         ;CENTENA = 0
+0030   01A5           00122     CLRF    MILHAR          ;MILHAR = 0
+0031   11A0           00123     BCF     QUAL_CANAL      ;QUAL_CANAL = 0
+0032   1107           00124     BCF     HEATER          ;HEATER = 0
+0033   1007           00125     BCF     FAN             ;FAN = 0
+0034   1206           00126     BCF     D_UNIDADE       ;apaga o display da UNIDADE
+0035   1286           00127     BCF     D_DEZENA        ;apaga o display da DEZENA
+0036   1306           00128     BCF     D_CENTENA       ;apaga o display da CENTENA
+0037   1386           00129     BCF     D_MILHAR        ;apaga o display da MILHAR     
+0038   168B           00130     BSF     INTCON,T0IE     ;permite atender interrupção por TMR0    
+0039   178B           00131     BSF     INTCON,GIE      ;permite atender interrupções  
+003A                  00132 LACO_PRINCIPAL
+003A   1C06           00133     BTFSS   BTN0            ;Testa se o Botão ON foi apertado
+003B   2???           00134     GOTO    SISTEMA_ON      ;Liga o sistema
+003C   2???           00135     GOTO    LACO_PRINCIPAL  ;Se o sistema estiver desligado ele continua esperando ligar
+                      00136     
+003D                  00137 SISTEMA_ON
+003D   1C86           00138     BTFSS   BTN1            ;Testa se o Botão ON foi apertado
+003E   2???           00139     GOTO    DESLIGA_TUDO    ;Volta para o Laço principal
+003F   1D06           00140     BTFSS   BTN2            ;testa se a chave está acionada
+0040   11A0           00141     BCF     QUAL_CANAL      ;QUAL_CANAL = 0
+0041   1D86           00142     BTFSS   BTN3            ;testa se a chave está acionada
+0042   15A0           00143     BSF     QUAL_CANAL      ;QUAL_CANAL = 1 
+                      00144     
+MPASM 5.71  08 - CONTROLE DE TEMPERATURA.ASM   5-6-2024  17:06:53         PAGE  4
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+0043   1820           00145     BTFSC   INT_ATIVA       ;testa se o bit indicador de tempo 4ms está ativo
+0044   2???           00146     CALL    TROCA_DISPLAY   ;se INT_ATIVA = 1, chama sub-rotina TROCA_DISPLAY
+0045   1CA0           00147     BTFSS   FIM_TEMPO       ;testa se o FIM_TEMPO = 1
+0046   2???           00148     GOTO    LACO_PRINCIPAL  ;se FIM_TEMPO = 0, pula para  LACO_PRINCIPAL
+                      00149     ;lê a entrada analógica - AN1
+0047   10A0           00150     BCF     FIM_TEMPO       ;FIM_TEMPO = 0
+0048   19A0           00151     BTFSC   QUAL_CANAL      ;verifica o canal que será lido
+0049   2???           00152     GOTO    AJUSTA_CANAL0   ;se QUAL_CANAL = 1, pula para AJUSTA_CANAL0
+004A   159F           00153     BSF     ADCON0,3        ;seta o bit4 para seleciona o canal 1
+004B                  00154 ATIVA_CONVERSAO   
+004B   151F           00155     BSF     ADCON0,GO       ;inicia a conversão
+004C                  00156 TESTA_FIM    
+004C   191F           00157     BTFSC   ADCON0,GO       ;testa se finalizou a conversão
+004D   2???           00158     GOTO    $-1             ;mesma coisa de  GOTO TESTA_FIM
+004E   081E           00159     MOVF    ADRESH,W        ;lê os 8MSBs do resultado da conversão
+004F   00A6           00160     MOVWF   VALOR_ADC_H     ;VALOR_ADC_H = ADRESH
+0050   1683           00161     BANK1                   ;seleciona banco 1 da memória RAM
+Message[302]: Register in operand not in bank 0.  Ensure that bank bits are correct.
+0051   081E           00162     MOVF    ADRESL,W        ;lê os 8LSBs do resultado da conversão
+0052   1283           00163     BANK0                   ;seleciona banco 0 da memória RAM
+0053   00A7           00164     MOVWF   VALOR_ADC_L     ;VALOR_ADC_L = ADRESL
+0054   01A5           00165     CLRF    MILHAR          ;MILHAR = 0
+0055                  00166 EXTRAI_MILHAR    
+0055   0826           00167     MOVF    VALOR_ADC_H,W   ;W = VALOR_ADC_H
+0056   00AA           00168     MOVWF   X_H             ;X_H = VALOR_ADC_H
+0057   0827           00169     MOVF    VALOR_ADC_L,W   ;W = VALOR_ADC_L
+0058   00AB           00170     MOVWF   X_L             ;X_L = VALOR_ADC_L  
+0059   3003           00171     MOVLW   0x03            ;W = 0x03
+005A   00AC           00172     MOVWF   Y_H             ;Y_H = 0x03
+005B   30E8           00173     MOVLW   0xE8            ;W = 0xE8
+005C   00AD           00174     MOVWF   Y_L             ;Y_L = 0xE8 
+005D   2???           00175     CALL    SUB_16_BITS     ;chama rotina de subtração de 16 bits
+005E   1920           00176     BTFSC   EH_NEGATIVO     ;testa se o resultado da operação deu negativo
+005F   2???           00177     GOTO    TRATA_CENTENA   ;se negativo pula para TRATA_CENTENA
+0060   082E           00178     MOVF    R_H,W           ;W = R_H
+0061   00A6           00179     MOVWF   VALOR_ADC_H     ;VALOR_ADC_H = R_H
+0062   082F           00180     MOVF    R_L,W           ;W = R_L
+0063   00A7           00181     MOVWF   VALOR_ADC_L     ;VALOR_ADC_L = R_L    
+0064   0AA5           00182     INCF    MILHAR,F        ;MILHAR++
+0065   2???           00183     GOTO    EXTRAI_MILHAR   ;pula para EXTRAI_MILHAR
+0066                  00184 TRATA_CENTENA    
+0066   01A4           00185     CLRF    CENTENA         ;CENTENA = 0
+0067                  00186 EXTRAI_CENTENA  
+0067   0826           00187     MOVF    VALOR_ADC_H,W   ;W = VALOR_ADC_H
+0068   00AA           00188     MOVWF   X_H             ;X_H = VALOR_ADC_H
+0069   0827           00189     MOVF    VALOR_ADC_L,W   ;W = VALOR_ADC_L
+006A   00AB           00190     MOVWF   X_L             ;X_L = VALOR_ADC_L  
+006B   3000           00191     MOVLW   0x00            ;W = 0x00
+006C   00AC           00192     MOVWF   Y_H             ;Y_H = 0x03
+006D   3064           00193     MOVLW   0x64            ;W = 0x64
+006E   00AD           00194     MOVWF   Y_L             ;Y_L = 0xE8 
+006F   2???           00195     CALL    SUB_16_BITS     ;chama rotina de subtração de 16 bits    
+0070   1920           00196     BTFSC   EH_NEGATIVO     ;testa se o resultado da operação deu negativo
+MPASM 5.71  08 - CONTROLE DE TEMPERATURA.ASM   5-6-2024  17:06:53         PAGE  5
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+0071   2???           00197     GOTO    TRATA_DEZENA    ;se negativo pula para TRATA_DEZENA    
+0072   082E           00198     MOVF    R_H,W           ;W = R_H
+0073   00A6           00199     MOVWF   VALOR_ADC_H     ;VALOR_ADC_H = R_H
+0074   082F           00200     MOVF    R_L,W           ;W = R_L
+0075   00A7           00201     MOVWF   VALOR_ADC_L     ;VALOR_ADC_L = R_L    
+0076   0AA4           00202     INCF    CENTENA,F       ;CENTENA++
+0077   2???           00203     GOTO    EXTRAI_CENTENA  ;pula para EXTRAI_CENTENA    
+0078                  00204 TRATA_DEZENA
+0078   01A3           00205     CLRF    DEZENA          ;DEZENA = 0
+0079                  00206 EXTRAI_DEZENA
+0079   300A           00207     MOVLW   .10             ;W = 10
+007A   0227           00208     SUBWF   VALOR_ADC_L,W   ;W = VALOR_ADC_L - W
+007B   1C03           00209     BTFSS   STATUS,C        ;testa se o resultado é negativo
+007C   2???           00210     GOTO    TRATA_UNIDADE   ;se negativo, pula para verificar valor unidade
+007D   00A7           00211     MOVWF   VALOR_ADC_L     ;VALOR_ADC_L = W = VALOR_ADC_L - 10
+007E   0AA3           00212     INCF    DEZENA,F        ;DEZENA++
+007F   2???           00213     GOTO    EXTRAI_DEZENA   ;    
+0080                  00214 TRATA_UNIDADE
+0080   0827           00215     MOVF    VALOR_ADC_L,W   ;W = VALOR_ADC_L
+0081   00A2           00216     MOVWF   UNIDADE         ;UNIDADE = VALOR_ADC_L 
+0082   2???           00217     GOTO    LACO_PRINCIPAL  ;pula para o LACO_PRINCIPAL
+0083                  00218 AJUSTA_CANAL0
+0083   119F           00219     BCF     ADCON0,3        ;reseta o bit4 para seleciona o canal 0
+0084   2???           00220     GOTO    ATIVA_CONVERSAO ;pula para ATIVA_CONVERSAO
+                      00221     
+                      00222     
+                      00223     
+0085                  00224 TROCA_DISPLAY
+0085   1020           00225     BCF     INT_ATIVA       ;INT_ATIVA = 0   
+0086   1E06           00226     BTFSS   D_UNIDADE       ;testa se o display da UNIDADE está acesso
+0087   2???           00227     GOTO    TESTA_DEZENA    ;se UNIDADE não estiver acesa, pula para TESTA_DEZENA
+0088                  00228 ACENDE_DEZENA
+0088   1206           00229     BCF     D_UNIDADE       ;apaga o display da UNIDADE
+0089   0823           00230     MOVF    DEZENA,W        ;W = DEZENA
+008A   2???           00231     CALL    BUSCA_CODIGO    ;chama a subrotina para buscar o código de 7 segmentos
+008B   0088           00232     MOVWF   DISPLAYS        ;DISPLAYS = W (código de 7 segmentos)
+008C   1686           00233     BSF     D_DEZENA        ;ativa o display da DEZENA
+008D   0008           00234     RETURN                  ;retorna da chamada de subrotina
+008E                  00235 TESTA_DEZENA
+008E   1E86           00236     BTFSS   D_DEZENA        ;testa se o display da DEZENA está acesso
+008F   2???           00237     GOTO    TESTA_CENTENA   ;se DEZENA não estiver acesa, pula para TESTA_CENTENA    
+0090   1286           00238     BCF     D_DEZENA        ;apaga o display da DEZENA
+0091   0824           00239     MOVF    CENTENA,W       ;W = CENTENA
+0092   2???           00240     CALL    BUSCA_CODIGO    ;chama a subrotina para buscar o código de 7 segmentos
+0093   0088           00241     MOVWF   DISPLAYS        ;DISPLAYS = W (código de 7 segmentos)
+0094   1706           00242     BSF     D_CENTENA       ;ativa o display da CENTENA
+0095   0008           00243     RETURN                  ;retorna da chamada de subrotina    
+0096                  00244 TESTA_CENTENA
+0096   1F06           00245     BTFSS   D_CENTENA       ;testa se o display da CENTENA está acesso
+0097   2???           00246     GOTO    TESTA_MILHAR    ;se CENTENA não estiver acesa, pula para TESTA_MILHAR    
+0098   1306           00247     BCF     D_CENTENA       ;apaga o display da CENTENA
+0099   0825           00248     MOVF    MILHAR,W        ;W = MILHAR
+009A   2???           00249     CALL    BUSCA_CODIGO    ;chama a subrotina para buscar o código de 7 segmentos
+MPASM 5.71  08 - CONTROLE DE TEMPERATURA.ASM   5-6-2024  17:06:53         PAGE  6
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+009B   0088           00250     MOVWF   DISPLAYS        ;DISPLAYS = W (código de 7 segmentos)
+009C   1786           00251     BSF     D_MILHAR        ;ativa o display da MILHAR
+009D   0008           00252     RETURN                  ;retorna da chamada de subrotina     
+009E                  00253 TESTA_MILHAR    
+009E   1386           00254     BCF     D_MILHAR        ;apaga o display da MILHAR
+009F   0822           00255     MOVF    UNIDADE,W       ;W = UNIDADE
+00A0   2???           00256     CALL    BUSCA_CODIGO    ;chama a subrotina para buscar o código de 7 segmentos
+00A1   0088           00257     MOVWF   DISPLAYS        ;DISPLAYS = W (código de 7 segmentos)
+00A2   1606           00258     BSF     D_UNIDADE       ;ativa o display da UNIDADE
+00A3   0008           00259     RETURN                  ;retorna da chamada de subrotina
+                      00260     
+00A4                  00261 SUB_16_BITS
+00A4   1120           00262     BCF     EH_NEGATIVO     ;
+00A5   082D           00263     MOVF    Y_L,W           ;W = Y_L
+00A6   022B           00264     SUBWF   X_L,W           ;W = X_L - Y_L
+00A7   00AF           00265     MOVWF   R_L             ;R_L = X_L - Y_L
+00A8   1C03           00266     BTFSS   STATUS,C        ;testa se o resutado foi negativo
+00A9   1520           00267     BSF     EH_NEGATIVO     ;se negativo EH_NEGATIVO = 1
+00AA   082C           00268     MOVF    Y_H,W           ;W = Y_H
+00AB   022A           00269     SUBWF   X_H,W           ;W = X_H - Y_H
+00AC   00AE           00270     MOVWF   R_H             ;R_H = X_H - Y_H
+00AD   1C03           00271     BTFSS   STATUS,C        ;testa se o resutado foi negativo
+00AE   2???           00272     GOTO    RES_NEGATIVO    ;se negativo pula para RES_NEGATIVO
+00AF   1D20           00273     BTFSS   EH_NEGATIVO     ;testa se EH_NEGATIVO = 1
+00B0   0008           00274     RETURN                  ;se não está ativo retorna
+00B1   3001           00275     MOVLW   .1              ;W = 1
+00B2   02AE           00276     SUBWF   R_H,F           ;RH = RH - 1
+00B3   1C03           00277     BTFSS   STATUS,C        ;testa se o resutado foi negativo
+00B4   0008           00278     RETURN                  ;se é negativo retorna
+00B5   1120           00279     BCF     EH_NEGATIVO     ;EH_NEGATIVO = 0
+00B6   0008           00280     RETURN                  ;retorna    
+00B7                  00281 RES_NEGATIVO    
+00B7   1520           00282     BSF     EH_NEGATIVO     ;EH_NEGATIVO = 1
+00B8   0008           00283     RETURN                  ;retorna   
+                      00284     
+3F71                  00285     END
+MPASM 5.71  08 - CONTROLE DE TEMPERATURA.ASM   5-6-2024  17:06:53         PAGE  7
+
+
+SYMBOL TABLE
+  LABEL                             VALUE 
+
+ACENDE_DEZENA                     00000088
+ACKDT                             00000005
+ACKEN                             00000004
+ACKSTAT                           00000006
+ADCON0                            0000001F
+ADCON1                            0000009F
+ADCS0                             00000006
+ADCS1                             00000007
+ADCS2                             00000006
+ADDEN                             00000003
+ADFM                              00000007
+ADIE                              00000006
+ADIF                              00000006
+ADON                              00000000
+ADRESH                            0000001E
+ADRESL                            0000009E
+AJUSTA_CANAL0                     00000083
+ATIVA_CONVERSAO                   0000004B
+BANK0                             BCF STATUS,RP0
+BANK1                             BSF STATUS,RP0
+BCLIE                             00000003
+BCLIF                             00000003
+BF                                00000000
+BRGH                              00000002
+BTN0                              PORTB,0
+BTN1                              PORTB,1
+BTN2                              PORTB,2
+BTN3                              PORTB,3
+BUSCA_CODIGO                      00000016
+C                                 00000000
+C1INV                             00000004
+C1OUT                             00000006
+C2INV                             00000005
+C2OUT                             00000007
+CCP1CON                           00000017
+CCP1IE                            00000002
+CCP1IF                            00000002
+CCP1M0                            00000000
+CCP1M1                            00000001
+CCP1M2                            00000002
+CCP1M3                            00000003
+CCP1X                             00000005
+CCP1Y                             00000004
+CCP2CON                           0000001D
+CCP2IE                            00000000
+CCP2IF                            00000000
+CCP2M0                            00000000
+CCP2M1                            00000001
+CCP2M2                            00000002
+CCP2M3                            00000003
+CCP2X                             00000005
+CCP2Y                             00000004
+CCPR1                             00000015
+MPASM 5.71  08 - CONTROLE DE TEMPERATURA.ASM   5-6-2024  17:06:53         PAGE  8
+
+
+SYMBOL TABLE
+  LABEL                             VALUE 
+
+CCPR1H                            00000016
+CCPR1L                            00000015
+CCPR2                             0000001B
+CCPR2H                            0000001C
+CCPR2L                            0000001B
+CENTENA                           00000024
+CHS0                              00000003
+CHS1                              00000004
+CHS2                              00000005
+CIS                               00000003
+CKE                               00000006
+CKP                               00000004
+CM0                               00000000
+CM1                               00000001
+CM2                               00000002
+CMCON                             0000009C
+CMIE                              00000006
+CMIF                              00000006
+CONTADOR                          00000021
+CREN                              00000004
+CSRC                              00000007
+CVR0                              00000000
+CVR1                              00000001
+CVR2                              00000002
+CVR3                              00000003
+CVRCON                            0000009D
+CVREN                             00000007
+CVROE                             00000006
+CVRR                              00000005
+D                                 00000005
+DATA_ADDRESS                      00000005
+DC                                00000001
+DESLIGA_TUDO                      0000002D
+DEZENA                            00000023
+DISPLAYS                          PORTD
+D_A                               00000005
+D_CENTENA                         PORTB,6
+D_DEZENA                          PORTB,5
+D_MILHAR                          PORTB,7
+D_NOT_A                           00000005
+D_UNIDADE                         PORTB,4
+EEADR                             0000010D
+EEADRH                            0000010F
+EECON1                            0000018C
+EECON2                            0000018D
+EEDATA                            0000010C
+EEDATH                            0000010E
+EEIE                              00000004
+EEIF                              00000004
+EEPGD                             00000007
+EH_NEGATIVO                       FLAGS,2
+EXTRAI_CENTENA                    00000067
+EXTRAI_DEZENA                     00000079
+MPASM 5.71  08 - CONTROLE DE TEMPERATURA.ASM   5-6-2024  17:06:53         PAGE  9
+
+
+SYMBOL TABLE
+  LABEL                             VALUE 
+
+EXTRAI_MILHAR                     00000055
+F                                 00000001
+FAN                               PORTC,0
+FERR                              00000002
+FIM_TEMPO                         FLAGS,1
+FLAGS                             00000020
+FSR                               00000004
+GCEN                              00000007
+GIE                               00000007
+GO                                00000002
+GO_DONE                           00000002
+GO_NOT_DONE                       00000002
+HEATER                            PORTC,2
+I2C_DATA                          00000005
+I2C_READ                          00000002
+I2C_START                         00000003
+I2C_STOP                          00000004
+IBF                               00000007
+IBOV                              00000005
+INDF                              00000000
+INICIO                            00000021
+INTCON                            0000000B
+INTE                              00000004
+INTEDG                            00000006
+INTF                              00000001
+INT_ATIVA                         FLAGS,0
+IRP                               00000007
+LACO_PRINCIPAL                    0000003A
+MILHAR                            00000025
+NOT_A                             00000005
+NOT_ADDRESS                       00000005
+NOT_BO                            00000000
+NOT_BOR                           00000000
+NOT_DONE                          00000002
+NOT_PD                            00000003
+NOT_POR                           00000001
+NOT_RBPU                          00000007
+NOT_RC8                           00000006
+NOT_T1SYNC                        00000002
+NOT_TO                            00000004
+NOT_TX8                           00000006
+NOT_W                             00000002
+NOT_WRITE                         00000002
+OBF                               00000006
+OERR                              00000001
+OPTION_REG                        00000081
+P                                 00000004
+PCFG0                             00000000
+PCFG1                             00000001
+PCFG2                             00000002
+PCFG3                             00000003
+PCL                               00000002
+PCLATH                            0000000A
+MPASM 5.71  08 - CONTROLE DE TEMPERATURA.ASM   5-6-2024  17:06:53         PAGE 10
+
+
+SYMBOL TABLE
+  LABEL                             VALUE 
+
+PCON                              0000008E
+PEIE                              00000006
+PEN                               00000002
+PIE1                              0000008C
+PIE2                              0000008D
+PIR1                              0000000C
+PIR2                              0000000D
+PORTA                             00000005
+PORTB                             00000006
+PORTC                             00000007
+PORTD                             00000008
+PORTE                             00000009
+PR2                               00000092
+PS0                               00000000
+PS1                               00000001
+PS2                               00000002
+PSA                               00000003
+PSPIE                             00000007
+PSPIF                             00000007
+PSPMODE                           00000004
+QUAL_CANAL                        FLAGS,3
+R                                 00000002
+RA0                               00000000
+RA1                               00000001
+RA2                               00000002
+RA3                               00000003
+RA4                               00000004
+RA5                               00000005
+RB0                               00000000
+RB1                               00000001
+RB2                               00000002
+RB3                               00000003
+RB4                               00000004
+RB5                               00000005
+RB6                               00000006
+RB7                               00000007
+RBIE                              00000003
+RBIF                              00000000
+RC0                               00000000
+RC1                               00000001
+RC2                               00000002
+RC3                               00000003
+RC4                               00000004
+RC5                               00000005
+RC6                               00000006
+RC7                               00000007
+RC8_9                             00000006
+RC9                               00000006
+RCD8                              00000000
+RCEN                              00000003
+RCIE                              00000005
+RCIF                              00000005
+RCREG                             0000001A
+MPASM 5.71  08 - CONTROLE DE TEMPERATURA.ASM   5-6-2024  17:06:53         PAGE 11
+
+
+SYMBOL TABLE
+  LABEL                             VALUE 
+
+RCSTA                             00000018
+RD                                00000000
+RD0                               00000000
+RD1                               00000001
+RD2                               00000002
+RD3                               00000003
+RD4                               00000004
+RD5                               00000005
+RD6                               00000006
+RD7                               00000007
+RE0                               00000000
+RE1                               00000001
+RE2                               00000002
+READ_WRITE                        00000002
+RES_NEGATIVO                      000000B7
+RP0                               00000005
+RP1                               00000006
+RSEN                              00000001
+RX9                               00000006
+RX9D                              00000000
+R_H                               0000002E
+R_L                               0000002F
+R_NOT_W                           00000002
+R_W                               00000002
+S                                 00000003
+SAI_INTERRUPCAO                   00000012
+SEN                               00000000
+SISTEMA_ON                        0000003D
+SMP                               00000007
+SPBRG                             00000099
+SPEN                              00000007
+SREN                              00000005
+SSPADD                            00000093
+SSPBUF                            00000013
+SSPCON                            00000014
+SSPCON2                           00000091
+SSPEN                             00000005
+SSPIE                             00000003
+SSPIF                             00000003
+SSPM0                             00000000
+SSPM1                             00000001
+SSPM2                             00000002
+SSPM3                             00000003
+SSPOV                             00000006
+SSPSTAT                           00000094
+STATUS                            00000003
+STATUS_TEMP                       00000029
+SUB_16_BITS                       000000A4
+SYNC                              00000004
+T0CS                              00000005
+T0IE                              00000005
+T0IF                              00000002
+T0SE                              00000004
+MPASM 5.71  08 - CONTROLE DE TEMPERATURA.ASM   5-6-2024  17:06:53         PAGE 12
+
+
+SYMBOL TABLE
+  LABEL                             VALUE 
+
+T1CKPS0                           00000004
+T1CKPS1                           00000005
+T1CON                             00000010
+T1INSYNC                          00000002
+T1OSCEN                           00000003
+T1SYNC                            00000002
+T2CKPS0                           00000000
+T2CKPS1                           00000001
+T2CON                             00000012
+TESTA_CENTENA                     00000096
+TESTA_DEZENA                      0000008E
+TESTA_FIM                         0000004C
+TESTA_MILHAR                      0000009E
+TMR0                              00000001
+TMR0IE                            00000005
+TMR0IF                            00000002
+TMR1                              0000000E
+TMR1CS                            00000001
+TMR1H                             0000000F
+TMR1IE                            00000000
+TMR1IF                            00000000
+TMR1L                             0000000E
+TMR1ON                            00000000
+TMR2                              00000011
+TMR2IE                            00000001
+TMR2IF                            00000001
+TMR2ON                            00000002
+TOUTPS0                           00000003
+TOUTPS1                           00000004
+TOUTPS2                           00000005
+TOUTPS3                           00000006
+TRATA_CENTENA                     00000066
+TRATA_DEZENA                      00000078
+TRATA_UNIDADE                     00000080
+TRISA                             00000085
+TRISA0                            00000000
+TRISA1                            00000001
+TRISA2                            00000002
+TRISA3                            00000003
+TRISA4                            00000004
+TRISA5                            00000005
+TRISB                             00000086
+TRISB0                            00000000
+TRISB1                            00000001
+TRISB2                            00000002
+TRISB3                            00000003
+TRISB4                            00000004
+TRISB5                            00000005
+TRISB6                            00000006
+TRISB7                            00000007
+TRISC                             00000087
+TRISC0                            00000000
+TRISC1                            00000001
+MPASM 5.71  08 - CONTROLE DE TEMPERATURA.ASM   5-6-2024  17:06:53         PAGE 13
+
+
+SYMBOL TABLE
+  LABEL                             VALUE 
+
+TRISC2                            00000002
+TRISC3                            00000003
+TRISC4                            00000004
+TRISC5                            00000005
+TRISC6                            00000006
+TRISC7                            00000007
+TRISD                             00000088
+TRISD0                            00000000
+TRISD1                            00000001
+TRISD2                            00000002
+TRISD3                            00000003
+TRISD4                            00000004
+TRISD5                            00000005
+TRISD6                            00000006
+TRISD7                            00000007
+TRISE                             00000089
+TRISE0                            00000000
+TRISE1                            00000001
+TRISE2                            00000002
+TRMT                              00000001
+TROCA_DISPLAY                     00000085
+TX8_9                             00000006
+TX9                               00000006
+TX9D                              00000000
+TXD8                              00000000
+TXEN                              00000005
+TXIE                              00000004
+TXIF                              00000004
+TXREG                             00000019
+TXSTA                             00000098
+UA                                00000001
+UNIDADE                           00000022
+VALOR_ADC_H                       00000026
+VALOR_ADC_L                       00000027
+V_CONT                            000000FA
+V_TMR0                            00000006
+W                                 00000000
+WCOL                              00000007
+WR                                00000001
+WREN                              00000002
+WRERR                             00000003
+W_TEMP                            00000028
+X_H                               0000002A
+X_L                               0000002B
+Y_H                               0000002C
+Y_L                               0000002D
+Z                                 00000002
+_BODEN_OFF                        00003FBF
+_BODEN_ON                         00003FFF
+_BOREN_OFF                        00003FBF
+_BOREN_ON                         00003FFF
+_CONFIG                           00002007
+_CPD_OFF                          00003FFF
+MPASM 5.71  08 - CONTROLE DE TEMPERATURA.ASM   5-6-2024  17:06:53         PAGE 14
+
+
+SYMBOL TABLE
+  LABEL                             VALUE 
+
+_CPD_ON                           00003EFF
+_CP_ALL                           00001FFF
+_CP_OFF                           00003FFF
+_CP_ON                            00001FFF
+_DEBUG_OFF                        00003FFF
+_DEBUG_ON                         000037FF
+_DEVID1                           00002006
+_FOSC_EXTRC                       00003FFF
+_FOSC_HS                          00003FFE
+_FOSC_LP                          00003FFC
+_FOSC_XT                          00003FFD
+_HS_OSC                           00003FFE
+_IDLOC0                           00002000
+_IDLOC1                           00002001
+_IDLOC2                           00002002
+_IDLOC3                           00002003
+_ISR_004D                         0000004D
+_LP_OSC                           00003FFC
+_LVP_OFF                          00003F7F
+_LVP_ON                           00003FFF
+_PWRTE_OFF                        00003FFF
+_PWRTE_ON                         00003FF7
+_RC_OSC                           00003FFF
+_WDTE_OFF                         00003FFB
+_WDTE_ON                          00003FFF
+_WDT_OFF                          00003FFB
+_WDT_ON                           00003FFF
+_WRT_1FOURTH                      00003BFF
+_WRT_256                          00003DFF
+_WRT_HALF                         000039FF
+_WRT_OFF                          00003FFF
+_XT_OSC                           00003FFD
+__16F877A                         00000001
+
+Errors   :     0
+Warnings :     0 reported,     0 suppressed
+Messages :     6 reported,     0 suppressed
+
+

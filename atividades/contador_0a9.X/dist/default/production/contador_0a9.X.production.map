@@ -1,0 +1,48 @@
+MPLINK 5.08, LINKER
+Linker Map File - Created Tue Apr 16 20:26:32 2024
+
+                                 Section Info
+                  Section       Type    Address   Location Size(Bytes)
+                ---------  ---------  ---------  ---------  ---------
+                 RES_VECT       code   0x000000    program   0x000084
+                   .cinit    romdata   0x000042    program   0x000004
+.config_2007_BUILD/DEFAULT/PRODUCTION/NEWPIC_       code   0x002007    program   0x000002
+
+
+
+                              Program Memory Usage 
+                               Start         End      
+                           ---------   ---------      
+                            0x000000    0x000043      
+                            0x002007    0x002007      
+            69 out of 2182 program addresses used, program memory utilization is 3%
+
+
+
+                              Symbols - Sorted by Name
+                     Name    Address   Location    Storage File                     
+                ---------  ---------  ---------  --------- ---------                
+             BUSCA_CODIGO   0x000035    program     static D:\projetos_pic\atividades\contador_0a9.X\newpic_8b_simple.asm
+       CANCELA_RUIDO_PROG   0x00000f    program     static D:\projetos_pic\atividades\contador_0a9.X\newpic_8b_simple.asm
+       CANCELA_RUIDO_REGR   0x00001d    program     static D:\projetos_pic\atividades\contador_0a9.X\newpic_8b_simple.asm
+               DECREMENTA   0x000024    program     static D:\projetos_pic\atividades\contador_0a9.X\newpic_8b_simple.asm
+               INCREMENTA   0x000016    program     static D:\projetos_pic\atividades\contador_0a9.X\newpic_8b_simple.asm
+                     MAIN   0x000008    program     static D:\projetos_pic\atividades\contador_0a9.X\newpic_8b_simple.asm
+                MAXIMIZAR   0x000030    program     static D:\projetos_pic\atividades\contador_0a9.X\newpic_8b_simple.asm
+                    ZERAR   0x00002b    program     static D:\projetos_pic\atividades\contador_0a9.X\newpic_8b_simple.asm
+
+
+
+                              Symbols - Sorted by Address
+                     Name    Address   Location    Storage File                     
+                ---------  ---------  ---------  --------- ---------                
+                     MAIN   0x000008    program     static D:\projetos_pic\atividades\contador_0a9.X\newpic_8b_simple.asm
+       CANCELA_RUIDO_PROG   0x00000f    program     static D:\projetos_pic\atividades\contador_0a9.X\newpic_8b_simple.asm
+               INCREMENTA   0x000016    program     static D:\projetos_pic\atividades\contador_0a9.X\newpic_8b_simple.asm
+       CANCELA_RUIDO_REGR   0x00001d    program     static D:\projetos_pic\atividades\contador_0a9.X\newpic_8b_simple.asm
+               DECREMENTA   0x000024    program     static D:\projetos_pic\atividades\contador_0a9.X\newpic_8b_simple.asm
+                    ZERAR   0x00002b    program     static D:\projetos_pic\atividades\contador_0a9.X\newpic_8b_simple.asm
+                MAXIMIZAR   0x000030    program     static D:\projetos_pic\atividades\contador_0a9.X\newpic_8b_simple.asm
+             BUSCA_CODIGO   0x000035    program     static D:\projetos_pic\atividades\contador_0a9.X\newpic_8b_simple.asm
+
+

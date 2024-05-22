@@ -1,0 +1,76 @@
+MPLINK 5.08, LINKER
+Linker Map File - Created Fri May 03 10:49:25 2024
+
+                                 Section Info
+                  Section       Type    Address   Location Size(Bytes)
+                ---------  ---------  ---------  ---------  ---------
+                 RES_VECT       code   0x000000    program   0x000002
+                   .cinit    romdata   0x000001    program   0x000004
+                      ISR       code   0x000004    program   0x000166
+.config_2007_BUILD/DEFAULT/PRODUCTION/TESTE.O       code   0x002007    program   0x000002
+
+
+
+                              Program Memory Usage 
+                               Start         End      
+                           ---------   ---------      
+                            0x000000    0x000002      
+                            0x000004    0x0000b6      
+                            0x002007    0x002007      
+            183 out of 8454 program addresses used, program memory utilization is 2%
+
+
+
+                              Symbols - Sorted by Name
+                     Name    Address   Location    Storage File                     
+                ---------  ---------  ---------  --------- ---------                
+            ACENDE_DEZENA   0x000086    program     static D:\projetos_pic\pic2_robson.X\teste.asm
+            AJUSTA_CANAL0   0x000081    program     static D:\projetos_pic\pic2_robson.X\teste.asm
+          ATIVA_CONVERSAO   0x000049    program     static D:\projetos_pic\pic2_robson.X\teste.asm
+             BUSCA_CODIGO   0x000016    program     static D:\projetos_pic\pic2_robson.X\teste.asm
+           EXTRAI_CENTENA   0x000065    program     static D:\projetos_pic\pic2_robson.X\teste.asm
+            EXTRAI_DEZENA   0x000077    program     static D:\projetos_pic\pic2_robson.X\teste.asm
+            EXTRAI_MILHAR   0x000053    program     static D:\projetos_pic\pic2_robson.X\teste.asm
+                   INICIO   0x000021    program     static D:\projetos_pic\pic2_robson.X\teste.asm
+           LACO_PRINCIPAL   0x000039    program     static D:\projetos_pic\pic2_robson.X\teste.asm
+             RES_NEGATIVO   0x0000b5    program     static D:\projetos_pic\pic2_robson.X\teste.asm
+          SAI_INTERRUPCAO   0x000012    program     static D:\projetos_pic\pic2_robson.X\teste.asm
+              SUB_16_BITS   0x0000a2    program     static D:\projetos_pic\pic2_robson.X\teste.asm
+            TESTA_CENTENA   0x000094    program     static D:\projetos_pic\pic2_robson.X\teste.asm
+             TESTA_DEZENA   0x00008c    program     static D:\projetos_pic\pic2_robson.X\teste.asm
+                TESTA_FIM   0x00004a    program     static D:\projetos_pic\pic2_robson.X\teste.asm
+             TESTA_MILHAR   0x00009c    program     static D:\projetos_pic\pic2_robson.X\teste.asm
+            TRATA_CENTENA   0x000064    program     static D:\projetos_pic\pic2_robson.X\teste.asm
+             TRATA_DEZENA   0x000076    program     static D:\projetos_pic\pic2_robson.X\teste.asm
+            TRATA_UNIDADE   0x00007e    program     static D:\projetos_pic\pic2_robson.X\teste.asm
+            TROCA_DISPLAY   0x000083    program     static D:\projetos_pic\pic2_robson.X\teste.asm
+                _ISR_004B   0x00004b    program     static D:\projetos_pic\pic2_robson.X\teste.asm
+
+
+
+                              Symbols - Sorted by Address
+                     Name    Address   Location    Storage File                     
+                ---------  ---------  ---------  --------- ---------                
+          SAI_INTERRUPCAO   0x000012    program     static D:\projetos_pic\pic2_robson.X\teste.asm
+             BUSCA_CODIGO   0x000016    program     static D:\projetos_pic\pic2_robson.X\teste.asm
+                   INICIO   0x000021    program     static D:\projetos_pic\pic2_robson.X\teste.asm
+           LACO_PRINCIPAL   0x000039    program     static D:\projetos_pic\pic2_robson.X\teste.asm
+          ATIVA_CONVERSAO   0x000049    program     static D:\projetos_pic\pic2_robson.X\teste.asm
+                TESTA_FIM   0x00004a    program     static D:\projetos_pic\pic2_robson.X\teste.asm
+                _ISR_004B   0x00004b    program     static D:\projetos_pic\pic2_robson.X\teste.asm
+            EXTRAI_MILHAR   0x000053    program     static D:\projetos_pic\pic2_robson.X\teste.asm
+            TRATA_CENTENA   0x000064    program     static D:\projetos_pic\pic2_robson.X\teste.asm
+           EXTRAI_CENTENA   0x000065    program     static D:\projetos_pic\pic2_robson.X\teste.asm
+             TRATA_DEZENA   0x000076    program     static D:\projetos_pic\pic2_robson.X\teste.asm
+            EXTRAI_DEZENA   0x000077    program     static D:\projetos_pic\pic2_robson.X\teste.asm
+            TRATA_UNIDADE   0x00007e    program     static D:\projetos_pic\pic2_robson.X\teste.asm
+            AJUSTA_CANAL0   0x000081    program     static D:\projetos_pic\pic2_robson.X\teste.asm
+            TROCA_DISPLAY   0x000083    program     static D:\projetos_pic\pic2_robson.X\teste.asm
+            ACENDE_DEZENA   0x000086    program     static D:\projetos_pic\pic2_robson.X\teste.asm
+             TESTA_DEZENA   0x00008c    program     static D:\projetos_pic\pic2_robson.X\teste.asm
+            TESTA_CENTENA   0x000094    program     static D:\projetos_pic\pic2_robson.X\teste.asm
+             TESTA_MILHAR   0x00009c    program     static D:\projetos_pic\pic2_robson.X\teste.asm
+              SUB_16_BITS   0x0000a2    program     static D:\projetos_pic\pic2_robson.X\teste.asm
+             RES_NEGATIVO   0x0000b5    program     static D:\projetos_pic\pic2_robson.X\teste.asm
+
+
